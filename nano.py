@@ -9,7 +9,7 @@ async def on_ready():
 pinsInMessage = {
 }
 
-#This code is so messy. Let me just remind myself what I'm doing.
+#This code is less messy than before! props to vince.
 
 @client.event
 async def on_message(message):
@@ -70,11 +70,11 @@ async def on_message(message):
         for element in reactsCatalogue:
           reacts += (str(element) + " ") #add all of the reacts
 
-        trueAuthor == (" [" + trueAuthor + "]") #add the author
+        trueAuthor = (" [" + trueAuthor + "]") #add the author
         
         formattedRipLine = ("**" + rip[0] + "**" + "  |  " + reacts + trueAuthor + "\n") #A single line, representing a rip
         result += formattedRipLine
 
-      result += ("`Number of pinned rips: " + str(totes) + "`")
+      result += ("\n`Total: " + str(totes) + "`")
       await message.channel.send(result)
 client.run('insert_token_here')
