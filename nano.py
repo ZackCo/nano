@@ -16,49 +16,50 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    #Executing the command, getting everything in the pin list.
-    if message.content.startswith('/roundup'):
+    #Execute the command, gather all of the pins into a list
+    if message.content.lower().startswith('/roundup'):
       currentChannel = message.channel
       pinList = await currentChannel.pins()
 
-      #If the message ID is equal to Matsu's post, remove it from the pin list.
+      #Remove Matsu's post about being sure to read the rules from the list
       for i in pinList:
-        if i.id == 302481260188532736:
-          pinList.remove(i)
+        if i.id == 302481260188532736: pinList.remove(i)
       
-      #This block puts everything in a dict for me to grab later.
-      for i in pinList:
-        mesg = await currentChannel.fetch_message(i.id)
+      #This block puts everything in a dict for me to grab later
+      for pinnedMessage in pinList:
+        mesg = await currentChannel.fetch_message(pinnedMessage.id)
         listOfReactions = mesg.reactions
-        listOfLines = i.content.split('\n')
+        listOfLines = pinnedMessage.content.split('\n')
         author = listOfLines[0]
   
-        for i in listOfLines:
-          if "Music:" in i:
-            indexToSubtractFrom = listOfLines.index(i) - 1
+        for line in listOfLines:
+          if "Music:" in line:
+            indexToSubtractFrom = listOfLines.index(line) - 1
         
         titleOfRip = listOfLines[indexToSubtractFrom].replace("```", "")
 
       #Sometimes there's one space between the title and "Music:" descriptor.
-        if listOfLines[indexToSubtractFrom] == "":
-          titleOfRip = listOfLines[indexToSubtractFrom - 1]
+        if not listOfLines[indexToSubtractFrom].strip(): #Check if the line is empty or whitespace
+          titleOfRip = listOfLines[indexToSubtractFrom - 1] #And remove it
       
       #Back to doing things related to the dict.
         pinsInMessage[titleOfRip] = {}
         pinsInMessage[titleOfRip]['Reactions'] = listOfReactions
         pinsInMessage[titleOfRip]['Author'] = author
       totes = 0
-      trueMessage = ("")
+      result = ("")
 
       #Getting everything sorted out for putting into the message.
-      for x in pinsInMessage.items():
-        totes += 1
-        listToMessWith = x[1]
+      for rip in pinsInMessage.items():
+        totes += 1 #This will be a count of how many rips are pinned
+        listToMessWith = rip[1]
         trueAuthor = listToMessWith['Author'].replace("**", "")
 
         reactsToWorkWith = listToMessWith['Reactions']
         reactsCatalogue = []
-        nettle = ''
+        
+        reacts = ''
+        author = ''
 
         for i in range(len(reactsToWorkWith)):
           changer = reactsToWorkWith[i].emoji
@@ -67,12 +68,13 @@ async def on_message(message):
             reactsCatalogue.append(changer)
 
         for element in reactsCatalogue:
-          nettle += (str(element) + " ")
+          reacts += (str(element) + " ") #add all of the reacts
 
-        nettle += (" [" + trueAuthor + "]")
-        msgLine = ("**" + x[0] + "**" + "  |  " + nettle + "\n" + "\n")
-        trueMessage += msgLine
+        trueAuthor == (" [" + trueAuthor + "]") #add the author
+        
+        formattedRipLine = ("**" + rip[0] + "**" + "  |  " + reacts + trueAuthor + "\n") #A single line, representing a rip
+        result += formattedRipLine
 
-      trueMessage += ("`Total: " + str(totes) + "`")
-      await message.channel.send(trueMessage)
+      result += ("`Number of pinned rips: " + str(totes) + "`")
+      await message.channel.send(result)
 client.run('insert_token_here')
