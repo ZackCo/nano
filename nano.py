@@ -15,9 +15,6 @@ pinsInMessage = {
 async def on_message(message):
     if message.author == client.user:
         return
-
-    if message.content.lower().startswith('/cleared'):
-      await message.channel.send('https://data.whicdn.com/images/153568032/original.gif')
     
     #Execute the command, gather all of the pins into a list
     if message.content.lower().startswith('/roundup'):
