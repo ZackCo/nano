@@ -24,9 +24,9 @@ async def on_message(message):
       currentChannel = message.channel
       pinList = await currentChannel.pins()
 
-      #Remove Matsu's post about being sure to read the rules from the list
+      #Remove a certain post about being sure to read the rules from the list
       for i in pinList:
-        if i.id == 629845156169777153: pinList.remove(i)
+        if i.id == insert_certain_post_id_here: pinList.remove(i)
 
       #This block puts everything in a dict for me to grab later
       for pinnedMessage in pinList:
