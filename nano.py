@@ -6,9 +6,6 @@ client = discord.Client()
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-pinsInMessage = {
-}
-
 #This code is less messy than before! props to vince.
 
 @client.event
@@ -18,6 +15,8 @@ async def on_message(message):
     
     #Execute the command, gather all of the pins into a list
     if message.content.lower().startswith('/roundup'):
+        pinsInMessage = {
+        }
       currentChannel = message.channel
       pinList = await currentChannel.pins()
 
