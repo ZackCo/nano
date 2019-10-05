@@ -1,6 +1,11 @@
 import discord
+from roundup import roundup
 
 client = discord.Client()
+
+bindings = [
+	{"name": "roundup", "channel": "qoc", "function": roundup}
+]
 
 @client.event
 async def on_ready():
@@ -13,72 +18,10 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 
-	if message.content.lower().startswith('/roundup'):
-		pinsInMessage = {
-		}
-		currentChannel = message.channel
-		pinList = await currentChannel.pins()
+	for binding in bindings:
+		if message.content.lower().startswith('/' + binding["name"]) and str(message.channel) == binding["channel"]:
+			await message.channel.send(binding["function"](message, await message.channel.pins()))
 
-		#Remove a certain post about being sure to read the rules from the list
-		for i in pinList:
-			if i.id == 629845156169777153: pinList.remove(i)
-
-		#This block puts everything in a dict for me to grab later
-		for pinnedMessage in pinList:
-			mesg = await currentChannel.fetch_message(pinnedMessage.id)
-			listOfReactions = mesg.reactions
-			listOfLines = pinnedMessage.content.split('\n')
-			author = listOfLines[0]
-			possibleRealAuthor = ''
-
-			for line in listOfLines:
-				if listOfLines.index(line) <= 3: #Kind of arbitrarily chosen? Not like beginning of a codeblock would be past line 4
-					if "```" in line:
-						strippedTitle = line.strip("```")
-						if strippedTitle != "": #if line has title on it, make stripped version title
-							titleOfRip = strippedTitle
-						elif strippedTitle == "":
-							indexToUse = listOfLines.index(line)
-							titleOfRip = listOfLines[(indexToUse + 1)]
-
-			if 'by me' in author:
-				possibleRealAuthor = (' (' + str(mesg.author) + ')')
-
-			#Back to doing things related to the dict.
-			pinsInMessage[titleOfRip] = {}
-			pinsInMessage[titleOfRip]['Reactions'] = listOfReactions
-			pinsInMessage[titleOfRip]['Author'] = author
-			pinsInMessage[titleOfRip]['possibleRealAuthor'] = possibleRealAuthor
-
-		totes = 0
-		result = ("")
-
-		for rip in pinsInMessage.items():
-			totes += 1 #This will be a count of how many rips are pinned
-			listToMessWith = rip[1]
-			trueAuthor = listToMessWith['Author'].replace("**", "")
-			possibleTrueAuthor = listToMessWith['possibleRealAuthor']
-			reactsToWorkWith = listToMessWith['Reactions']
-			reactsCatalogue = []
-
-			reacts = ''
-			author = ''
-
-			for i in range(len(reactsToWorkWith)):
-				changer = reactsToWorkWith[i].emoji
-
-				for i in range(reactsToWorkWith[i].count):
-					reactsCatalogue.append(changer)
-
-			for element in reactsCatalogue:
-				reacts += (str(element) + " ") #add all of the reacts together
-
-			trueAuthor = (" [" + trueAuthor + "]" + possibleTrueAuthor) #add the author
-
-			formattedRipLine = ("**" + rip[0] + "**" + "  |  " + reacts + trueAuthor + "\n") #A single line, representing a rip
-			result += formattedRipLine
-
-		result += ("\n`Total: " + str(totes) + "`")
-		await message.channel.send(result)
-
-client.run('insert_token_here')
+#Requires a file "token" with a Discord OAuth2 token
+with open('token') as token:
+	client.run(token.readline())
