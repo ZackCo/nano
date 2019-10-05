@@ -1,4 +1,6 @@
 import discord
+from james import randJames
+import random
 
 client = discord.Client()
 
@@ -15,6 +17,16 @@ pinsInMessage = {
 async def on_message(message):
     if message.author == client.user:
         return
+
+    if message.content.lower().startswith('/james'):
+    	james = random.choice(randJames)
+    	await message.channel.send(james)
+
+    if message.content.lower().startswith('/help'):
+    	await message.channel.send("This bot is designed to assist QoC, and post images of CaptainComedy (/james).")
+
+    if message.content.lower().startswith('/ralph'):
+    	await message.channel.send("https://media.discordapp.net/attachments/531993001745055754/561940298343776268/image0.gif")
 
     if message.content.lower().startswith('/cleared'):
       await message.channel.send('https://data.whicdn.com/images/153568032/original.gif')
@@ -81,4 +93,4 @@ async def on_message(message):
       result += ("\n`Total: " + str(totes) + "`")
       await message.channel.send(result)
 
-client.run('insert_token_here')
+client.run('NTY0ODExNjEyNjk1ODIyMzQ4.XZfvVQ.6sqVo5e7w-2w4JA8GlFzocrjDcY')
