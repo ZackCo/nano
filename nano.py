@@ -81,4 +81,4 @@ async def on_message(message):
 		result += ("\n`Total: " + str(totes) + "`")
 		await message.channel.send(result)
 
-client.run('NTY0ODExNjEyNjk1ODIyMzQ4.XZgDRg.0SKQYLHEaHI2z3WIa1OYsqdV064')
+client.run('insert_token_here')
